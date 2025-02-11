@@ -302,6 +302,8 @@ ipcRenderer.on("activityData", (event, arg) => {
   };
 });
 
+
+
 //---------------------------signup-------------------------------------------------------
 
 const userSignupData = localStorage.getItem("userSignupData");
@@ -310,11 +312,15 @@ if (userSignupData) {
     "none";
 }
 
-const parsedDataName = JSON.parse(userSignupData);
-const name = parsedDataName?.data?.name; // Extract email
-document.getElementById(
-  "welocome-candidate-name"
-).innerHTML = `Welcome ${name} !`;
+function toGetName(){
+  const userSignupData2 = localStorage.getItem("userSignupData");
+  const parsedDataName = JSON.parse(userSignupData2);
+  const name = parsedDataName?.data?.name; // Extract email
+  document.getElementById(
+    "welocome-candidate-name"
+  ).innerHTML = `Welcome ${name} !`;  
+}
+
 
 async function signup(event) {
   event.preventDefault(); // Prevent form from refreshing the page
@@ -348,6 +354,8 @@ async function signup(event) {
         "block";
       document.getElementById("signupFormAppit").style.display = "none";
       document.getElementById("appit-surveillance").style.display = "block";
+      document.getElementById("after-signup-form-will-be-none").style.display = "none";
+      toGetName()// adding user name function call
     } else {
       document.getElementById(
         "alert-register-messages"
@@ -386,6 +394,7 @@ async function login() {
     return;
   }
 
+
   const parsedData = JSON.parse(userSignupData);
   const email = parsedData?.data?.email; // Extract email
 
@@ -416,6 +425,7 @@ async function login() {
       }, 2000);
       document.getElementById("alert-register-messages").style.display =
         "block";
+        toGetName()// adding user name function call
     } else {
       document.getElementById(
         "alert-register-messages"

@@ -7,6 +7,7 @@ let totalLockTime = 0;
 let sleepStartTime = null;
 let lockStartTime = null;
 
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 400,
@@ -28,6 +29,7 @@ function createWindow() {
     e.preventDefault(); // Prevent window from closing The close button is disabled.
   });
 }
+
 
 app.whenReady().then(() => {
   createWindow();
@@ -66,7 +68,7 @@ app.whenReady().then(() => {
 
     if (idleTimes >= 6) {
       // User is idle
-      // console.log(`⚠️ User has been idle for ${idleTimes} seconds!`);
+      // console.log(`User has been idle for ${idleTimes} seconds!`);
       // Send data to the renderer process
       if (mainWindow && mainWindow.webContents) {
         mainWindow.webContents.send("activityData", {
@@ -79,7 +81,7 @@ app.whenReady().then(() => {
       isUserActive = false;
     } else if (!isUserActive) {
       // User becomes active again
-      // console.log("🟢 User is active!");
+      // console.log("User is active!");
       if (mainWindow && mainWindow.webContents) {
         mainWindow.webContents.send("activityData", {
           idleTime: 0, // No idle time
