@@ -1,0 +1,14 @@
+# Ignore Electron release builds
+dist/
+release/
+out/
+release-builds
+
+# Ignore dependencies
+node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore environment variables
+.env
