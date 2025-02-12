@@ -15,7 +15,7 @@ document.getElementById("idle-pop-msg-container").style.display = "none";
 document.getElementById("logout-pop-msg").style.display = "none";
 document.getElementById("appit-surveillance").style.display = "none";
 
-const timeData = [];
+let timeData = [];
 
 function getFormattedDate() {
   const today = new Date();
@@ -30,7 +30,7 @@ function toGetLoginDateTime() {
   const todayDate = getFormattedDate();
   const today = new Date();
 
-  // Format time as HH:MM:SS AM/PM
+  // Format time as HH:MM AM/PM
   const formattedTime = today.toLocaleString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
@@ -38,7 +38,7 @@ function toGetLoginDateTime() {
   });
 
   // Combine Date & Time
-  const formattedDateTime = `${formattedTime} , ${todayDate}`; // "08/02/2025 09:05:23 PM"
+  const formattedDateTime = `${formattedTime} , ${todayDate}`;
 
   let existingEntry = timeData.find((entry) => entry.date === todayDate);
 
@@ -46,17 +46,20 @@ function toGetLoginDateTime() {
     // Save only if there is NO existing entry for today
     timeData.push({
       date: todayDate,
-      loginAt: formattedDateTime,
+      loginAt: [formattedDateTime], // Store as an array
     });
+    existingEntry = timeData[timeData.length - 1]; // Get the last inserted entry
   } else {
-    existingEntry.loginAt = formattedDateTime;
+    existingEntry.loginAt.push(formattedDateTime); // Append new login time
   }
 
-  timeData.map((e) => {
-    document.getElementById(
-      "start-candidate-time"
-    ).innerText = `Login at : ${e.loginAt}`;
-  });
+  // Get the latest login time
+  const currentLoginDateTime = existingEntry.loginAt[existingEntry.loginAt.length - 1];
+
+  // Update UI
+  document.getElementById(
+    "start-candidate-time"
+  ).innerText = `Login at : ${currentLoginDateTime}`;
 }
 
 function formatTime(ms) {
@@ -83,11 +86,12 @@ document.getElementById("start-btn").addEventListener("click", function () {
   document.getElementById("start-btn").disabled = true;
   document.getElementById("stop-btn").disabled = false;
   document.getElementById("pause-btn").disabled = false;
-  toGetLoginDateTime();
+
   if (!isWorking) {
     startTime = Date.now();
     workTimer = setInterval(updateWorkTimer, 1000);
     isWorking = true;
+    ONbreakIdlePop = false;
   }
   if (isOnBreak) {
     clearInterval(breakTimer);
@@ -95,6 +99,7 @@ document.getElementById("start-btn").addEventListener("click", function () {
     isOnBreak = false;
   }
 });
+
 
 document.getElementById("pause-btn").addEventListener("click", function () {
   document.getElementById("start-btn").disabled = false;
@@ -104,6 +109,7 @@ document.getElementById("pause-btn").addEventListener("click", function () {
     workElapsed += Date.now() - startTime;
     isWorking = false;
   }
+  
   if (!isOnBreak) {
     breakStartTime = Date.now();
     breakTimer = setInterval(updateBreakTimer, 1000);
@@ -227,6 +233,7 @@ ipcRenderer.on("activityData", (event, arg) => {
     return;
   }
 
+
   if (idleTime >= 6) {
     document.getElementById("idle-pop-msg").innerHTML = newIdleTime - 6;
     document.getElementById("idle-pop-msg-container").style.display = "block";
@@ -266,10 +273,14 @@ ipcRenderer.on("activityData", (event, arg) => {
       startTime = Date.now();
       workTimer = setInterval(updateWorkTimer, 1000);
       isWorking = true;
+      document.getElementById("start-btn").disabled = true;
+      document.getElementById("pause-btn").disabled = false;
     } else if (lastActiveTimer === "break") {
       breakStartTime = Date.now();
       breakTimer = setInterval(updateBreakTimer, 1000);
       isOnBreak = true;
+      document.getElementById("start-btn").disabled = false;
+      document.getElementById("pause-btn").disabled = true;
     }
 
     if (isIdle && idleTime === 0) {
@@ -322,6 +333,7 @@ function toGetName(){
 }
 
 
+
 async function signup(event) {
   event.preventDefault(); // Prevent form from refreshing the page
 
@@ -329,7 +341,7 @@ async function signup(event) {
   const email = document.getElementById("email").value;
 
   try {
-    const response = await fetch("http://localhost:8000/api/auth/register", {
+    const response = await fetch("https://backend.conferencemeet.online/api/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -356,6 +368,8 @@ async function signup(event) {
       document.getElementById("appit-surveillance").style.display = "block";
       document.getElementById("after-signup-form-will-be-none").style.display = "none";
       toGetName()// adding user name function call
+      toGetLoginDateTime();
+      ONbreakIdlePop = false;
     } else {
       document.getElementById(
         "alert-register-messages"
@@ -399,7 +413,7 @@ async function login() {
   const email = parsedData?.data?.email; // Extract email
 
   try {
-    const response = await fetch("http://localhost:8000/api/auth/login", {
+    const response = await fetch("https://backend.conferencemeet.online/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -426,6 +440,8 @@ async function login() {
       document.getElementById("alert-register-messages").style.display =
         "block";
         toGetName()// adding user name function call
+        toGetLoginDateTime();
+        ONbreakIdlePop = false;
     } else {
       document.getElementById(
         "alert-register-messages"
@@ -489,7 +505,7 @@ async function toSaveDataInDataBase() {
 
   try {
     const response = await fetch(
-      "http://localhost:8000/api/employee/TimeTrackingofUser",
+      "https://backend.conferencemeet.online/api/employee/TimeTrackingofUser",
       {
         method: "POST",
         headers: {
@@ -500,6 +516,8 @@ async function toSaveDataInDataBase() {
     );
 
     const data = await response.json();
+
+
 
     console.log("data---", payload);
 
@@ -527,12 +545,14 @@ async function toSaveDataInDataBase() {
   document.getElementById("worktime-saving-messages").style.display = "block";
 }
 
-/// Function to reset the UI when data is successfully submitted
+// Function to reset the UI when data is successfully submitted
 async function whenDataSubmitted() {
   try {
     workElapsed = 0;
     breakElapsed = 0;
     lastIdleValue = 0;
+    ONbreakIdlePop = false;
+    timeData = [] ; // make array empty
     document.getElementById("total-idle-time").innerText = "00:00:00";
     document.getElementById("display").innerText = "00:00:00";
     document.getElementById("break-time").innerText = "00:00:00";
@@ -540,12 +560,20 @@ async function whenDataSubmitted() {
     document.getElementById("signupFormAppit").style.display = "block";
     document.getElementById("start-candidate-time").innerText = "";
     document.getElementById("success-msg").innerText =
-      "Your Work time submitted successfully.";
+    "Your Work time submitted successfully.";
+   
+    setTimeout(() => {
+  document.getElementById("success-msg").innerText = "";
+}, 3000);
 
-    setInterval(() => {
-      document.getElementById("success-msg").innerText = "";
-    }, 3000);
+
   } catch (error) {
     console.error("Error resetting UI after submission:", error);
   }
 }
+
+
+
+
+
+

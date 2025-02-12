@@ -10,7 +10,7 @@ let lockStartTime = null;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 400,
+    width: 1000,
     height: 580,
     resizable: false, // Disable resizing
     fullscreenable: false, // Disable fullscreen
@@ -24,7 +24,7 @@ function createWindow() {
   });
   mainWindow.setMenu(null);
   mainWindow.loadFile("./App/index.html");
-  //  mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   mainWindow.on("close", (e) => {
     e.preventDefault(); // Prevent window from closing The close button is disabled.
   });
