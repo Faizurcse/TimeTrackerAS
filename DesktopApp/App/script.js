@@ -10,6 +10,7 @@ let isIdle = false; // Flag to track idle state
 let lastIdleValue = 0; // Stores the last idle time before becoming active
 let ONbreakIdlePop = false;
 let OnLogouIdlePop = false;
+let newIdleTime=0
 
 document.getElementById("idle-pop-msg-container").style.display = "none";
 document.getElementById("logout-pop-msg").style.display = "none";
@@ -54,7 +55,8 @@ function toGetLoginDateTime() {
   }
 
   // Get the latest login time
-  const currentLoginDateTime = existingEntry.loginAt[existingEntry.loginAt.length - 1];
+  const currentLoginDateTime =
+    existingEntry.loginAt[existingEntry.loginAt.length - 1];
 
   // Update UI
   document.getElementById(
@@ -100,7 +102,6 @@ document.getElementById("start-btn").addEventListener("click", function () {
   }
 });
 
-
 document.getElementById("pause-btn").addEventListener("click", function () {
   document.getElementById("start-btn").disabled = false;
   document.getElementById("pause-btn").disabled = true;
@@ -109,7 +110,7 @@ document.getElementById("pause-btn").addEventListener("click", function () {
     workElapsed += Date.now() - startTime;
     isWorking = false;
   }
-  
+
   if (!isOnBreak) {
     breakStartTime = Date.now();
     breakTimer = setInterval(updateBreakTimer, 1000);
@@ -157,6 +158,7 @@ document.getElementById("stop-btn").addEventListener("click", function () {
   document.getElementById("logout-pop-time").innerText =
     formatTime(workElapsed);
 });
+
 
 function noButton() {
   document.getElementById("logout-pop-msg").style.display = "none";
@@ -220,22 +222,27 @@ ipcRenderer.on("activityData", (event, arg) => {
   let idle = idleTime ? parseInt(idleTime, 10) : 0;
   let sleep = sleepTime ? parseInt(sleepTime, 10) : 0;
   let lock = lockTime ? parseInt(lockTime, 10) : 0;
-  let newIdleTime = idle + sleep + lock;
-
+  
   // Reset idle time when break starts
   if (isOnBreak) {
     lastIdleValue = 0;
     return; // Don't show idle pop-up on break
   }
-
+  
   if (OnLogouIdlePop) {
     lastIdleValue = 0;
     return;
   }
 
-
+  newIdleTime = idle + sleep + lock;
+  console.log("-->>>",newIdleTime)
+  
+  
   if (idleTime >= 6) {
     document.getElementById("idle-pop-msg").innerHTML = newIdleTime - 6;
+    console.log("newIdleTime before 0 --",newIdleTime)
+
+    document.getElementById("logout-pop-msg").style.display = "none";
     document.getElementById("idle-pop-msg-container").style.display = "block";
 
     if (isWorking) {
@@ -299,10 +306,12 @@ ipcRenderer.on("activityData", (event, arg) => {
         });
       }
 
-      lastIdleValue = 0;
+      lastIdleValue = 0; 
+      newIdleTime = 0;
       isIdle = false;
       console.log("Updated Time Data:", timeData);
       updateIdleTime();
+      console.log("newIdleTime after 0 -- ",newIdleTime)
     }
 
     console.log("Idle Time Reason:", idletimeReason);
@@ -313,8 +322,6 @@ ipcRenderer.on("activityData", (event, arg) => {
   };
 });
 
-
-
 //---------------------------signup-------------------------------------------------------
 
 const userSignupData = localStorage.getItem("userSignupData");
@@ -323,31 +330,33 @@ if (userSignupData) {
     "none";
 }
 
-function toGetName(){
+function toGetName() {
   const userSignupData2 = localStorage.getItem("userSignupData");
   const parsedDataName = JSON.parse(userSignupData2);
   const name = parsedDataName?.data?.name; // Extract email
   document.getElementById(
     "welocome-candidate-name"
-  ).innerHTML = `Welcome ${name} !`;  
+  ).innerHTML = `Welcome ${name} !`;
 }
 
-
-
 async function signup(event) {
+  OnLogouIdlePop = false;
   event.preventDefault(); // Prevent form from refreshing the page
 
   const name = document.getElementById("name").value;
   const email = document.getElementById("email").value;
 
   try {
-    const response = await fetch("https://backend.conferencemeet.online/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, email }), // Convert to JSON
-    });
+    const response = await fetch(
+      "https://backend.conferencemeet.online/api/auth/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email }), // Convert to JSON
+      }
+    );
 
     const data = await response.json(); // Get response from API
 
@@ -366,10 +375,10 @@ async function signup(event) {
         "block";
       document.getElementById("signupFormAppit").style.display = "none";
       document.getElementById("appit-surveillance").style.display = "block";
-      document.getElementById("after-signup-form-will-be-none").style.display = "none";
-      toGetName()// adding user name function call
+      document.getElementById("after-signup-form-will-be-none").style.display =
+        "none";
+      toGetName(); // adding user name function call
       toGetLoginDateTime();
-      ONbreakIdlePop = false;
     } else {
       document.getElementById(
         "alert-register-messages"
@@ -394,6 +403,7 @@ async function signup(event) {
 }
 
 async function login() {
+  OnLogouIdlePop = false;
   // Get saved user data from localStorage
   const userSignupData = localStorage.getItem("userSignupData");
 
@@ -408,18 +418,20 @@ async function login() {
     return;
   }
 
-
   const parsedData = JSON.parse(userSignupData);
   const email = parsedData?.data?.email; // Extract email
 
   try {
-    const response = await fetch("https://backend.conferencemeet.online/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email }), // Send only email
-    });
+    const response = await fetch(
+      "https://backend.conferencemeet.online/api/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }), // Send only email
+      }
+    );
 
     const data = await response.json(); // Get response from API
 
@@ -439,9 +451,8 @@ async function login() {
       }, 2000);
       document.getElementById("alert-register-messages").style.display =
         "block";
-        toGetName()// adding user name function call
-        toGetLoginDateTime();
-        ONbreakIdlePop = false;
+      toGetName(); // adding user name function call
+      toGetLoginDateTime();
     } else {
       document.getElementById(
         "alert-register-messages"
@@ -517,10 +528,6 @@ async function toSaveDataInDataBase() {
 
     const data = await response.json();
 
-
-
-    console.log("data---", payload);
-
     if (response.ok && data) {
       document.getElementById(
         "worktime-saving-messages"
@@ -551,8 +558,7 @@ async function whenDataSubmitted() {
     workElapsed = 0;
     breakElapsed = 0;
     lastIdleValue = 0;
-    ONbreakIdlePop = false;
-    timeData = [] ; // make array empty
+    timeData = []; // make array empty
     document.getElementById("total-idle-time").innerText = "00:00:00";
     document.getElementById("display").innerText = "00:00:00";
     document.getElementById("break-time").innerText = "00:00:00";
@@ -560,20 +566,12 @@ async function whenDataSubmitted() {
     document.getElementById("signupFormAppit").style.display = "block";
     document.getElementById("start-candidate-time").innerText = "";
     document.getElementById("success-msg").innerText =
-    "Your Work time submitted successfully.";
-   
+      "Your Work time submitted successfully.";
+
     setTimeout(() => {
-  document.getElementById("success-msg").innerText = "";
-}, 3000);
-
-
+      document.getElementById("success-msg").innerText = "";
+    }, 3000);
   } catch (error) {
     console.error("Error resetting UI after submission:", error);
   }
 }
-
-
-
-
-
-

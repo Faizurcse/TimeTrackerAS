@@ -1,0 +1,180 @@
+.nav-item-timetracker-fz {
+  text-decoration: none;  /* Removes underline */
+  color: inherit;         /* Inherits text color from parent */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+/* Logo container */
+.appit-logo-by-fz {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 15px 0;
+    border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Logo image */
+  .appit-logo-by-fz-img {
+    width:43px;
+    height:45px;
+    object-fit: contain;
+    margin-right: 10px;
+  }
+  
+  /* Brand name text */
+  .appit-logo-by-fz-barnd-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    white-space: nowrap;
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Collapsed Sidebar: Hide brand name */
+  .time-tarcker-fz-cotainer.collapsed .appit-logo-by-fz-barnd-name {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    transition: opacity 0.3s ease, width 0.3s ease;
+  }
+  
+
+/* General container styles */
+.time-tarcker-fz-main-cotainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: 100vh; */
+    /* background-color: #f4f7fc; */
+  }
+  
+  /* Main content wrapper */
+  .time-tarcker-fz-cotainer {
+    display: flex;
+    width: 100%;
+    height:97.5vh;
+    /* background: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  /* Left Sidebar */
+  .time-tarcker-fz-left-side-bar {
+    width: 250px;
+    /* background: #2c3e50; */
+    background:black;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: width 0.3s ease;
+  }
+  
+  /* Collapsed Sidebar */
+  .time-tarcker-fz-cotainer.collapsed .time-tarcker-fz-left-side-bar {
+    width: 60px;
+  }
+  
+  .time-tarcker-fz-left-side-bar.collapsed .time-tarcker-fz-left-side-bar-items-home-text {
+    display: none;
+  }
+  
+  /* Sidebar toggle icon */
+  .time-tarcker-fz-left-side-bar-on-off-icons {
+    cursor: pointer;
+    text-align:start;
+    padding: 10px;
+    /* background: #34495e; */
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+  }
+  
+  .time-tarcker-fz-left-side-bar-on-off-icons:hover {
+    /* background: #1abc9c; */
+  }
+  
+  /* Sidebar items */
+  .time-tarcker-fz-left-side-bar-items {
+    width: 100%;
+  }
+  
+  .time-tarcker-fz-left-side-bar-items-all {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #34495e;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-bottom: 5%;
+  }
+  
+  .time-tarcker-fz-left-side-bar-items-all:hover {
+    background: #1abc9c;
+  }
+  
+  /* Sidebar icons */
+  .time-tarcker-fz-left-side-bar-items-home-icon {
+    font-size: 20px;
+    margin-right: 10px;
+  }
+  
+  /* Sidebar text */
+  .time-tarcker-fz-left-side-bar-items-home-text {
+    font-size: 16px;
+    font-weight: 500;
+    transition: opacity 0.3s ease;
+  }
+
+ /* Logout button at the bottom */
+.time-tarcker-fz-left-side-bar-items-logout {
+  margin-top: auto; /* Push to bottom */
+  padding: 10px;
+  border-top: 3px solid rgba(255, 255, 255, 0.2);
+  width: 90%; /* Full-width border */
+  display: flex;
+  justify-content: center;
+}
+
+/* Logout button style */
+.time-tarcker-fz-left-side-bar-items-logout-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: red;
+  text-decoration: none;
+  font-weight: bold;
+  width: 100%; /* Ensures full width */
+  padding: 12px;
+  text-align: center;
+  justify-content: center; /* Centers content */
+}
+
+/* Hover effect */
+.time-tarcker-fz-left-side-bar-items-logout-item:hover {
+  color: darkred;
+}
+
+/* Logout icon */
+.time-tarcker-fz-left-side-bar-items-logout-icon {
+  color: red;
+}
+
+  /* Right display container */
+  .time-tarcker-fz-right-display-conatiner {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  

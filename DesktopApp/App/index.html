@@ -8,169 +8,166 @@
   </head>
   <body>
     <div class="main-time-tracker-fz-conatiner">
+      <div id="appit-surveillance">
+        <div class="appit-time-tracker-by-fz-timer">
+          <h3 style="font-size: 24px; font-weight: 600; color: chocolate">
+            Appit Surveillance
+          </h3>
+          <div id="display">00:00:00</div>
+          <div class="appit-time-tracker-by-fz-controls">
+            <button id="start-btn">Start</button>
+            <button id="pause-btn" disabled>Break</button>
+            <button id="stop-btn" disabled>Logout</button>
+          </div>
 
-    
-    <div id="appit-surveillance">
-      <div class="appit-time-tracker-by-fz-timer">
-        <h3 style="font-size: 24px; font-weight: 600; color: chocolate">
-          Appit Surveillance
-        </h3>
-        <div id="display">00:00:00</div>
-        <div class="appit-time-tracker-by-fz-controls">
-          <button id="start-btn">Start</button>
-          <button id="pause-btn" disabled>Break</button>
-          <button id="stop-btn" disabled>Logout</button>
-        </div>
-
-        <div class="appit-time-tracker-by-fz-summary">
-          <p
-            style="font-size: 16px; font-weight: 500; color: #28a745"
-            id="welocome-candidate-name"
-          ></p>
-          <p
-            style="font-size:14px; font-weight: 500; color: green"
-            id="start-candidate-time"
-          ></p>
-          <!-- <h2>Summary</h2> -->
-          <p>
-            Break Time:
-            <span style="color: blue" id="break-time">00:00:00</span>
-          </p>
-          <!-- <p>Total Work Time: <span style="color: blue;" id="work-time">00:00:00</span></p>
+          <div class="appit-time-tracker-by-fz-summary">
+            <p
+              style="font-size: 16px; font-weight: 500; color: #28a745"
+              id="welocome-candidate-name"
+            ></p>
+            <p
+              style="font-size: 14px; font-weight: 500; color: green"
+              id="start-candidate-time"
+            ></p>
+            <!-- <h2>Summary</h2> -->
+            <p>
+              Break Time:
+              <span style="color: blue" id="break-time">00:00:00</span>
+            </p>
+            <!-- <p>Total Work Time: <span style="color: blue;" id="work-time">00:00:00</span></p>
       <p>Total Break Time: <span style="color: blue;" id="total-break-time">00:00:00</span></p> -->
-          <p>
-            Total idle Time:
-            <span style="color: blue" id="total-idle-time">00:00:00</span>
-          </p>
-          <p style="color: red" id="worktime-saving-messages"></p>
+            <p>
+              Total idle Time:
+              <span style="color: blue" id="total-idle-time">00:00:00</span>
+            </p>
+            <p style="color: red" id="worktime-saving-messages"></p>
+          </div>
+        </div>
+
+        <div id="logout-pop-msg">
+          <h2>Total work Time</h2>
+          <span id="logout-pop-time">00:00:00</span>
+          <span id="logout-pop-work-confirm-msg"
+            >If you want to back to work, click "No"<br />
+            To submit work time, click "Yes"</span
+          >
+          <button onclick="noButton()" id="logout-pop-no-btn">No</button>
+          <button onclick="yesButton()" id="logout-pop-yes-btn">Yes</button>
+          <span id="logout-pop-submittion-msg"></span>
+        </div>
+
+        <div id="idle-pop-msg-container">
+          <h3>Idle Time Alert</h3>
+          <span id="idle-pop-msg"></span>
+          <input
+            id="idle-pop-msg-input"
+            type="text"
+            placeholder="Enter reason for idle time..."
+          />
+          <span id="if-not-add-text"></span>
+          <button id="idle-pop-msg-btn">Submit</button>
         </div>
       </div>
+      <!----------------------- signup form ----------------------------------->
 
-      <div id="logout-pop-msg">
-        <h2>Total work Time</h2>
-        <span id="logout-pop-time">00:00:00</span>
-        <span id="logout-pop-work-confirm-msg"
-          >If you want to back to work, click "No"<br />
-          To submit work time, click "Yes"</span
-        >
-        <button onclick="noButton()" id="logout-pop-no-btn">No</button>
-        <button onclick="yesButton()" id="logout-pop-yes-btn">Yes</button>
-        <span id="logout-pop-submittion-msg"></span>
-      </div>
-
-      <div id="idle-pop-msg-container">
-        <h3>Idle Time Alert</h3>
-        <span id="idle-pop-msg"></span>
-        <input
-          id="idle-pop-msg-input"
-          type="text"
-          placeholder="Enter reason for idle time..."
-        />
-        <span id="if-not-add-text"></span>
-        <button id="idle-pop-msg-btn">Submit</button>
-      </div>
-    </div>
-    <!----------------------- signup form ----------------------------------->
-
-    <div
-      id="signupFormAppit"
-      style="
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 90vh;
-        margin: 0;
-      "
-    >
       <div
+        id="signupFormAppit"
         style="
-          background: white;
-          padding: 20px;
-          border-radius: 10px;
-          box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
-          width: 300px;
-          text-align: center;
+          font-family: Arial, sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 90vh;
+          margin: 0;
         "
       >
-        <h3 style="font-size: 20px; margin-bottom: 15px; color: chocolate">
-          Appit Surveillance Authentication
-        </h3>
-        <form id="after-signup-form-will-be-none" onsubmit="signup(event)">
-          <input
-            type="text"
-            id="name"
-            placeholder="Enter your name"
-            required
-            style="
-              width: 92%;
-              padding: 10px;
-              margin: 8px 0;
-              border: 1px solid #ccc;
-              border-radius: 5px;
-              font-size: 16px;
-            "
-          />
+        <div
+          style="
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
+            width: 300px;
+            text-align: center;
+          "
+        >
+          <h3 style="font-size: 20px; margin-bottom: 15px; color: chocolate">
+            Appit Surveillance Authentication
+          </h3>
+          <form id="after-signup-form-will-be-none" onsubmit="signup(event)">
+            <input
+              type="text"
+              id="name"
+              placeholder="Enter your name"
+              required
+              style="
+                width: 92%;
+                padding: 10px;
+                margin: 8px 0;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 16px;
+              "
+            />
 
-          <input
-            type="email"
-            id="email"
-            placeholder="Enter your email"
-            required
-            style="
-              width: 92%;
-              padding: 10px;
-              margin: 8px 0;
-              border: 1px solid #ccc;
-              border-radius: 5px;
-              font-size: 16px;
-            "
-          />
+            <input
+              type="email"
+              id="email"
+              placeholder="Enter your email"
+              required
+              style="
+                width: 92%;
+                padding: 10px;
+                margin: 8px 0;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 16px;
+              "
+            />
 
+            <button
+              type="submit"
+              style="
+                width: 100%;
+                padding: 10px;
+                margin-top: 10px;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                cursor: pointer;
+                background-color: #28a745;
+                color: white;
+              "
+            >
+              Signup
+            </button>
+          </form>
           <button
-            type="submit"
+            onclick="login()"
+            type="button"
             style="
               width: 100%;
               padding: 10px;
               margin-top: 10px;
+              box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+                rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
               border: none;
               border-radius: 5px;
               font-size: 16px;
               cursor: pointer;
-              background-color: #28a745;
-              color: white;
+              color: green;
             "
           >
-            Signup
+            already registered click to login
           </button>
-        </form>
-        <button
-          onclick="login()"
-          type="button"
-          style="
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
-              rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            color: green;
-          "
-        >
-          already registered click to login
-        </button>
-        <div
-          style="color: red; padding-top: 10px"
-          id="alert-register-messages"
-        ></div>
-        <h4 style="color: red;" id="success-msg"></h4>
+          <div
+            style="color: red; padding-top: 10px"
+            id="alert-register-messages"
+          ></div>
+          <h4 style="color: red" id="success-msg"></h4>
+        </div>
       </div>
     </div>
-
-  </div>
 
     <script src="script.js"></script>
     <script type="module" src="renderer.js"></script>

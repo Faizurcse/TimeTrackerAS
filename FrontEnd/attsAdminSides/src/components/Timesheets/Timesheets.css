@@ -1,0 +1,100 @@
+.time-sheets-fz-main-container {
+    padding: 20px;
+    
+  }
+  
+  .time-sheets-fz-text {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .time-sheets-fz-container {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  }
+  
+  /* Filter container */
+  .time-sheets-fz-container-filters {
+    display: flex;
+    gap:100px !important;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  
+  /* Label and input wrapper */
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+  }
+  
+  .input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+  }
+  
+  .time-sheets-fz-container-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    width:250px;
+  }
+  
+  .time-sheets-fz-container-input:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  
+  /* Table */
+  .time-sheets-fz-container-table {
+    overflow-x: auto;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  thead {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  th {
+    font-size: 16px;
+  }
+  
+
+  /* Table container with scroll */
+.time-sheets-fz-container-table {
+    max-height: 420px; /* Adjust height as needed */
+    overflow-y: auto;
+    overflow-x: auto;
+    border: 1px solid #ddd; /* Optional: Adds a border around the scrollable table */
+  }
+  
+  /* Ensure table header stays visible while scrolling */
+  .time-sheets-fz-container-table thead {
+    position: sticky;
+    top: 0;
+    background-color: #007bff;
+    color: white;
+    z-index: 1;
+  }
+  
