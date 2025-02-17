@@ -1,106 +1,90 @@
 import { app, BrowserWindow, powerMonitor } from "electron";
 
 let mainWindow;
-let isUserActive = false; // Flag to track if the user is already active
-let totalSleepTime = 0;
-let totalLockTime = 0;
 let sleepStartTime = null;
 let lockStartTime = null;
+let sleepTime = 0;
+let lockTime = 0;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1000,
+    width: 400,
     height: 580,
-    resizable: false, // Disable resizing
-    fullscreenable: false, // Disable fullscreen
-    maximizable: false, // Disable maximizing
-    closable: false, // Has no direct effect, so handle it in 'close' event
-    // minimizable:false,
+    resizable: false,
+    fullscreenable: false,
+    maximizable: false,
+    closable: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
     },
   });
+
   mainWindow.setMenu(null);
   mainWindow.loadFile("./App/index.html");
-  mainWindow.webContents.openDevTools();
-  mainWindow.on("close", (e) => {
-    e.preventDefault(); // Prevent window from closing The close button is disabled.
+
+  mainWindow.on("close", async (e) => {
+    e.preventDefault(); // Prevent immediate close
+
+    if (mainWindow && mainWindow.webContents) {
+      mainWindow.webContents.send("data-saved-in-database", {
+        DBdata: "closeWindow",
+      });
+
+      setTimeout(() => {
+        mainWindow.destroy(); // Close after 7 seconds
+      }, 7000);
+    }
   });
 }
-
 
 app.whenReady().then(() => {
   createWindow();
 
-  // Detect when the system goes to sleep
   powerMonitor.on("suspend", () => {
     sleepStartTime = Date.now();
   });
 
-  // Detect when the system wakes up
   powerMonitor.on("resume", () => {
     if (sleepStartTime) {
-      const sleepDuration = (Date.now() - sleepStartTime) / 1000;
-      totalSleepTime += sleepDuration;
+      sleepTime = Math.floor((Date.now() - sleepStartTime) / 1000);
       sleepStartTime = null;
     }
+    resetIdleTimes(); // Reset times when user is active
   });
 
-  // Detect screen lock
   powerMonitor.on("lock-screen", () => {
     lockStartTime = Date.now();
   });
 
-  // Detect screen unlock
   powerMonitor.on("unlock-screen", () => {
     if (lockStartTime) {
-      const lockDuration = (Date.now() - lockStartTime) / 1000;
-      totalLockTime += lockDuration;
+      lockTime = Math.floor((Date.now() - lockStartTime) / 1000);
       lockStartTime = null;
     }
+    resetIdleTimes(); // Reset times when user is active
   });
 
-  // Track total idle, sleep, and lock time every 6 seconds
+  function resetIdleTimes() {
+    sleepTime = 0;
+    lockTime = 0;
+  }
+
   setInterval(() => {
-    const idleTimes = powerMonitor.getSystemIdleTime();
+    const idleTime = powerMonitor.getSystemIdleTime();
 
-    if (idleTimes >= 6) {
-      // User is idle
-
-       console.log(`User has been idle for ${idleTimes-5} seconds!`);
-      // Send data to the renderer process
-      if (mainWindow && mainWindow.webContents) {
-        mainWindow.webContents.send("activityData", {
-          idleTime: idleTimes,
-          sleepTime: totalSleepTime,
-          lockTime: totalLockTime,
-        });
-      }
-      // Reset active flag to allow future activity detection
-      isUserActive = false;
-    } else if (!isUserActive) {
-      // User becomes active again
-       console.log("User is active!",idleTimes !== 0 ? 0 : 0);
-      if (mainWindow && mainWindow.webContents) {
-        mainWindow.webContents.send("activityData", {
-          idleTime: idleTimes !== 0 ? 0 : 0,// No idle time
-          sleepTime: totalSleepTime,
-          lockTime: totalLockTime,
-        });
-      }
-      // Set the flag so the active check is not triggered again
-      isUserActive = true;
+    if (mainWindow && mainWindow.webContents) {
+      mainWindow.webContents.send("activityData", {
+        idleTime: idleTime >= 6 ? idleTime : 0,
+        sleepTime,
+        lockTime,
+      });
     }
   }, 1000);
 });
-
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
 });
-
-
-

@@ -10,7 +10,7 @@ let isIdle = false; // Flag to track idle state
 let lastIdleValue = 0; // Stores the last idle time before becoming active
 let ONbreakIdlePop = false;
 let OnLogouIdlePop = false;
-let newIdleTime=0
+let newIdleTime = 0;
 
 document.getElementById("idle-pop-msg-container").style.display = "none";
 document.getElementById("logout-pop-msg").style.display = "none";
@@ -159,7 +159,6 @@ document.getElementById("stop-btn").addEventListener("click", function () {
     formatTime(workElapsed);
 });
 
-
 function noButton() {
   document.getElementById("logout-pop-msg").style.display = "none";
 
@@ -222,25 +221,23 @@ ipcRenderer.on("activityData", (event, arg) => {
   let idle = idleTime ? parseInt(idleTime, 10) : 0;
   let sleep = sleepTime ? parseInt(sleepTime, 10) : 0;
   let lock = lockTime ? parseInt(lockTime, 10) : 0;
-  
+
   // Reset idle time when break starts
   if (isOnBreak) {
     lastIdleValue = 0;
     return; // Don't show idle pop-up on break
   }
-  
+
   if (OnLogouIdlePop) {
     lastIdleValue = 0;
     return;
   }
 
   newIdleTime = idle + sleep + lock;
-  console.log("-->>>",newIdleTime)
-  
-  
+  console.log("-->>>", newIdleTime, idle, sleep, lock);
+
   if (idleTime >= 6) {
     document.getElementById("idle-pop-msg").innerHTML = newIdleTime - 6;
-    console.log("newIdleTime before 0 --",newIdleTime)
 
     document.getElementById("logout-pop-msg").style.display = "none";
     document.getElementById("idle-pop-msg-container").style.display = "block";
@@ -306,12 +303,10 @@ ipcRenderer.on("activityData", (event, arg) => {
         });
       }
 
-      lastIdleValue = 0; 
+      lastIdleValue = 0;
       newIdleTime = 0;
       isIdle = false;
-      console.log("Updated Time Data:", timeData);
       updateIdleTime();
-      console.log("newIdleTime after 0 -- ",newIdleTime)
     }
 
     console.log("Idle Time Reason:", idletimeReason);
@@ -320,6 +315,19 @@ ipcRenderer.on("activityData", (event, arg) => {
     document.getElementById("idle-pop-msg-container").style.display = "none";
     document.getElementById("start-btn").disabled = false;
   };
+});
+
+// -----------------if close window data will save in databse--------------------------------
+
+ipcRenderer.on("data-saved-in-database", (event, arg) => {
+  const { DBdata } = arg;
+
+  if (DBdata === "closeWindow") {
+    if (typeof timeData === "undefined" || timeData.length === 0) {
+      return; // Safely exit if timeData is empty or undefined
+    }
+    yesButton(); // Call the function if timeData is valid
+  }
 });
 
 //---------------------------signup-------------------------------------------------------
