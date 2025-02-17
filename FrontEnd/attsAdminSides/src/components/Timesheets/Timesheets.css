@@ -2,7 +2,38 @@
     padding: 20px;
     
   }
+  .appit-time-tracker-by-fz-time-sheets-btn {
+    width:100px;
+    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+    background-color:green;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3sease-in-out;
+    margin-top: 10px;
+  }
   
+  .appit-time-tracker-by-fz-time-sheets-btn:hover {
+    background-color: #0056b3; /* Darker blue */
+    box-shadow: 0px 5px 12px rgba(0, 91, 204, 0.4);
+  }
+  
+  .appit-time-tracker-by-fz-time-sheets-btn:active {
+    background-color: #004494;
+    transform: scale(0.98);
+  }
+  
+  .appit-time-tracker-by-fz-time-sheets-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  
+
   .time-sheets-fz-text {
     font-size: 24px;
     font-weight: bold;
@@ -13,16 +44,16 @@
   .time-sheets-fz-container {
     background: white;
     padding: 25px;
-    border-radius: 10px;
+    border-radius: 20px;
     box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
   }
   
   /* Filter container */
   .time-sheets-fz-container-filters {
     display: flex;
-    gap:100px !important;
     flex-wrap: wrap;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    gap: 25px;
   }
   
   /* Label and input wrapper */
@@ -43,7 +74,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
-    width:250px;
+    width:200px;
   }
   
   .time-sheets-fz-container-input:focus {
@@ -83,7 +114,8 @@
 
   /* Table container with scroll */
 .time-sheets-fz-container-table {
-    max-height: 420px; /* Adjust height as needed */
+  max-width:1200px ;
+  max-height: 420px; /* Adjust height as needed */
     overflow-y: auto;
     overflow-x: auto;
     border: 1px solid #ddd; /* Optional: Adds a border around the scrollable table */
@@ -98,3 +130,35 @@
     z-index: 1;
   }
   
+
+/* Login Time Scroller */
+.login-at-time-fz-codes {
+    max-height: 70px; /* Adjust height as needed */
+    overflow-y: auto; /* Enables vertical scrolling */
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    padding: 5px;
+    background-color: #e9f7ef; /* Light green */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: normal; /* Allows text wrapping */
+   word-wrap: break-word; /*  Breaks long words */
+    /* display: block; Ensures scroll works */
+}
+
+
+.idle-msg-scroller-fz{
+  max-height: 70px; /* Adjust height as needed */
+    overflow-y: auto; /* Enables vertical scrolling */
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    padding: 5px;
+    background-color: #e9f7ef; /* Light green */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: normal; /* Allows text wrapping */
+    word-wrap: break-word;  /*Breaks long words */
+    display: block; 
+}

@@ -33,6 +33,24 @@ function Timesheets() {
       <div className="time-sheets-fz-container">
         {/* Filters */}
         <div className="time-sheets-fz-container-filters">
+          <div className="input-group">
+            <label>Name</label>
+            <input
+              className="time-sheets-fz-container-input"
+              type="text"
+              placeholder=" employee name"
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Email</label>
+            <input
+              className="time-sheets-fz-container-input"
+              type="email"
+              placeholder=" employee email"
+            />
+          </div>
+
           {/* Day Input */}
           <div className="input-group">
             <label>Day</label>
@@ -40,13 +58,15 @@ function Timesheets() {
           </div>
 
           {/* Week Input */}
-          <div  className="input-group">
+          <div className="input-group">
             <label>Week</label>
             <input
               className="time-sheets-fz-container-input"
               type="text"
               value={weekStart && weekEnd ? `${weekStart} to ${weekEnd}` : ""}
-              onClick={() => document.getElementById("week-start-picker").click()} // Open date picker
+              onClick={() =>
+                document.getElementById("week-start-picker").click()
+              } // Open date picker
             />
             <input
               id="week-start-picker"
@@ -76,6 +96,14 @@ function Timesheets() {
                 );
               })}
             </select>
+            <div style={{display:"flex",gap:"10px"}}>
+            <button className="appit-time-tracker-by-fz-time-sheets-btn">
+              Submit
+            </button>
+            <button style={{background:'#cbe3bf',color:'#2a2a2a',}} className="appit-time-tracker-by-fz-time-sheets-btn">
+            Export
+            </button>
+            </div>
           </div>
         </div>
 
@@ -102,6 +130,38 @@ function Timesheets() {
                 <td>00:00:00</td>
                 <td>00:00:00</td>
                 <td>00:00:00</td>
+
+                <td className="login-at-time-fz-codes">
+                  09:45 PM, 02/01/2025 09:45 PM, 02/01/2025 09:45 PM, 02/01/2025
+                  09:45 PM, 02/01/2025 09:45 PM, 02/01/2025 09:45 PM, 02/01/2025
+                  09:45 PM, 02/01/2025 09:45 PM, 02/01/2025
+                </td>
+                <td className="idle-msg-scroller-fz">
+                  Meetings, Short Meetings, Meet with Asif Meetings, Short
+                  Meetings, Meet with Asif Meetings, Short Meetings, Meet with
+                  Asif Meetings, Short Meetings, Meet with Asif Meetings, Short
+                  Meetings, Meet with Asif
+                </td>
+              </tr>
+
+              <tr>
+                <td>02/01/2025</td>
+                <td>Faiz</td>
+                <td>faiz@gmail.com</td>
+                <td>00:00:00</td>
+                <td>00:00:00</td>
+                <td>00:00:00</td>
+                <td>09:45 PM, 02/01/2025</td>
+                <td>Meetings, Short Meetings, Meet with Asif</td>
+              </tr>
+
+              <tr>
+                <td>02/01/2025</td>
+                <td>Faiz</td>
+                <td>faiz@gmail.com</td>
+                <td>00:00:00</td>
+                <td>00:00:00</td>
+                <td>00:00:00</td>
                 <td>09:45 PM, 02/01/2025</td>
                 <td>Meetings, Short Meetings, Meet with Asif</td>
               </tr>
@@ -128,7 +188,6 @@ function Timesheets() {
                 <td>Meetings, Short Meetings, Meet with Asif</td>
               </tr>
 
-
               <tr>
                 <td>02/01/2025</td>
                 <td>Faiz</td>
@@ -139,31 +198,6 @@ function Timesheets() {
                 <td>09:45 PM, 02/01/2025</td>
                 <td>Meetings, Short Meetings, Meet with Asif</td>
               </tr>
-
-
-              <tr>
-                <td>02/01/2025</td>
-                <td>Faiz</td>
-                <td>faiz@gmail.com</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>09:45 PM, 02/01/2025</td>
-                <td>Meetings, Short Meetings, Meet with Asif</td>
-              </tr>
-
-
-              <tr>
-                <td>02/01/2025</td>
-                <td>Faiz</td>
-                <td>faiz@gmail.com</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>09:45 PM, 02/01/2025</td>
-                <td>Meetings, Short Meetings, Meet with Asif</td>
-              </tr>
-
 
               <tr>
                 <td>02/01/2025</td>
