@@ -4,8 +4,7 @@ import RegisterModel from "../Models/Register.model.js";
 // Register by admin Controller
 export const TimeTrackingofUser = async (req, res) => {
   try {
-    console.log("Request Body:", req.body); // Debugging
-
+    
     let {
       name,
       email,

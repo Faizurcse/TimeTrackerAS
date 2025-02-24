@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 // Import routes
 import authRoutes from "./routes/authRoutes.js";
 import TimeTrackingofUser from "./routes/TimeCounter.routes.js";
+import EmployeeTimeSheets from "./routes/TimeSheets.routes.js";
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use(cors());
 // Use routes
 app.use("/api/auth", authRoutes);
 app.use("/api/employee", TimeTrackingofUser);
+app.use("/api/timeSheet", EmployeeTimeSheets);
 
 app.listen(port, "localhost", () => {
   console.log(`Server is listening on ${port}`);

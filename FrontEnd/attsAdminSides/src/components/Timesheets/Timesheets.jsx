@@ -1,28 +1,101 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "./Timesheets.css";
 
 function Timesheets() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
   const [weekStart, setWeekStart] = useState("");
   const [weekEnd, setWeekEnd] = useState("");
+  const [timesheetData, setTimesheetData] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Handle month selection
-  const handleMonthChange = (event) => {
-    setSelectedMonth(event.target.value);
+  // Helper function to format date as dd-mm-yyyy
+  const formatDate = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    return `${String(d.getDate()).padStart(2, "0")}-${String(
+      d.getMonth() + 1
+    ).padStart(2, "0")}-${d.getFullYear()}`;
   };
 
-  // Handle week start date change and auto-calculate end date
+  const handleNameChange = (event) => setName(event.target.value);
+  const handleEmailChange = (event) => setEmail(event.target.value);
+  const handleDateChange = (event) => setSelectedDate(event.target.value);
+
   const handleWeekStartChange = (event) => {
     const startDate = event.target.value;
-    setWeekStart(startDate);
+    if (!startDate) {
+      setWeekStart("");
+      setWeekEnd("");
+      return;
+    }
 
-    if (startDate) {
-      let start = new Date(startDate);
-      let end = new Date(start);
-      end.setDate(start.getDate() + 6); // Add 6 days to get the week's end date
-      setWeekEnd(end.toISOString().split("T")[0]); // Format YYYY-MM-DD
-    } else {
-      setWeekEnd(""); // Reset end date if start date is cleared
+    let start = new Date(startDate);
+    let end = new Date(start);
+    end.setDate(start.getDate() + 6);
+
+    setWeekStart(formatDate(start));
+    setWeekEnd(formatDate(end));
+  };
+
+  // Helper function to format time (seconds -> HH:MM:SS)
+  const formatIdleTime = (seconds) => {
+    if (!seconds) return "00:00:00";
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+      2,
+      "0"
+    )}:${String(secs).padStart(2, "0")}`;
+  };
+
+  // Helper function to format time (ms -> HH:MM:SS)
+  function formatTime(ms) {
+    let hours = Math.floor(ms / (1000 * 60 * 60));
+    let minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+    let seconds = Math.floor((ms % (1000 * 60)) / 1000);
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+      2,
+      "0"
+    )}:${String(seconds).padStart(2, "0")}`;
+  }
+
+  // Handle form submission
+  const handleSubmit = async () => {
+    try {
+      const requestData = {
+        name,
+        email,
+        date: selectedDate,
+        startWeek: weekStart,
+        endWeek: weekEnd,
+        month: selectedMonth,
+      };
+
+      console.log("Sending request data:", requestData);
+
+      const response = await axios.post(
+        "http://localhost:8000/api/timeSheet/employeeTimesheet",
+        requestData
+      );
+
+      console.log("Response received:", response.data);
+
+      if (response.data.status === "success") {
+        setTimesheetData(response.data.data);
+        setErrorMessage("");
+      } else {
+        setTimesheetData(null);
+        setErrorMessage(response.data.message || "No records found.");
+      }
+    } catch (error) {
+      console.error("Error fetching timesheet data:", error);
+      setTimesheetData(null);
+      setErrorMessage("Failed to fetch timesheet data. Please try again.");
     }
   };
 
@@ -38,7 +111,9 @@ function Timesheets() {
             <input
               className="time-sheets-fz-container-input"
               type="text"
-              placeholder=" employee name"
+              placeholder="Employee name"
+              value={name}
+              onChange={handleNameChange}
             />
           </div>
 
@@ -47,181 +122,128 @@ function Timesheets() {
             <input
               className="time-sheets-fz-container-input"
               type="email"
-              placeholder=" employee email"
+              placeholder="Employee email"
+              value={email}
+              onChange={handleEmailChange}
             />
           </div>
 
           {/* Day Input */}
           <div className="input-group">
             <label>Day</label>
-            <input className="time-sheets-fz-container-input" type="date" />
+            <input
+              className="time-sheets-fz-container-input"
+              type="date"
+              value={selectedDate}
+              onChange={handleDateChange}
+            />
           </div>
 
           {/* Week Input */}
           <div className="input-group">
             <label>Week</label>
-            <input
-              className="time-sheets-fz-container-input"
-              type="text"
-              value={weekStart && weekEnd ? `${weekStart} to ${weekEnd}` : ""}
-              onClick={() =>
-                document.getElementById("week-start-picker").click()
-              } // Open date picker
-            />
-            <input
-              id="week-start-picker"
-              className="hidden-date-picker"
-              type="date"
-              onChange={handleWeekStartChange}
-            />
+            <div className="week-input-wrapper">
+              <input
+                className="week-display-input"
+                type="text"
+                value={weekStart && weekEnd ? `${weekStart} to ${weekEnd}` : ""}
+                placeholder="dd-mm-yyyy"
+                readOnly
+                onClick={() =>
+                  document.getElementById("week-start-picker").click()
+                }
+              />
+              <input
+                id="week-start-picker"
+                className="week-date-picker"
+                type="date"
+                onChange={handleWeekStartChange}
+              />
+            </div>
           </div>
 
-          {/* Month Input */}
+          {/* Month & Year Selection */}
           <div className="input-group">
-            <label>Month</label>
+            <label>Month & Year</label>
             <select
               className="time-sheets-fz-container-input"
               value={selectedMonth}
-              onChange={handleMonthChange}
+              onChange={(event) => setSelectedMonth(event.target.value)}
             >
-              <option value="">Select Month</option>
-              {Array.from({ length: 12 }, (_, i) => {
-                const month = new Date(2025, i, 1).toLocaleString("default", {
-                  month: "long",
+              <option value="">Select Month & Year</option>
+              {Array.from({ length: 5 }).map((_, yearOffset) => {
+                const yearValue = new Date().getFullYear() - yearOffset;
+                return Array.from({ length: 12 }, (_, i) => {
+                  const month = new Date(2025, i, 1).toLocaleString("default", {
+                    month: "short",
+                  });
+                  const value = `${month}-${yearValue}`;
+                  return (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  );
                 });
-                return (
-                  <option key={i} value={month}>
-                    {month}
-                  </option>
-                );
               })}
             </select>
-            <div style={{display:"flex",gap:"10px"}}>
-            <button className="appit-time-tracker-by-fz-time-sheets-btn">
-              Submit
-            </button>
-            <button style={{background:'#cbe3bf',color:'#2a2a2a',}} className="appit-time-tracker-by-fz-time-sheets-btn">
-            Export
-            </button>
-            </div>
           </div>
         </div>
 
-        {/* Table */}
+        {/* Buttons */}
+        <div className="buttons-container">
+          <button
+            className="appit-time-tracker-by-fz-time-sheets-btn"
+            onClick={handleSubmit}
+          >
+            Submit
+          </button>
+          <button
+            style={{ background: "#cbe3bf", color: "#2a2a2a" }}
+            className="appit-time-tracker-by-fz-time-sheets-btn"
+          >
+            Export
+          </button>
+        </div>
+
+        {/* Results Table */}
         <div className="time-sheets-fz-container-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Total Work Time</th>
-                <th>Total Break Time</th>
-                <th>Total Idle Time</th>
-                <th>Login At</th>
-                <th>Idle messages</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>02/01/2025</td>
-                <td>Faiz</td>
-                <td>faiz@gmail.com</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-
-                <td className="login-at-time-fz-codes">
-                  09:45 PM, 02/01/2025 09:45 PM, 02/01/2025 09:45 PM, 02/01/2025
-                  09:45 PM, 02/01/2025 09:45 PM, 02/01/2025 09:45 PM, 02/01/2025
-                  09:45 PM, 02/01/2025 09:45 PM, 02/01/2025
-                </td>
-                <td className="idle-msg-scroller-fz">
-                  Meetings, Short Meetings, Meet with Asif Meetings, Short
-                  Meetings, Meet with Asif Meetings, Short Meetings, Meet with
-                  Asif Meetings, Short Meetings, Meet with Asif Meetings, Short
-                  Meetings, Meet with Asif
-                </td>
-              </tr>
-
-              <tr>
-                <td>02/01/2025</td>
-                <td>Faiz</td>
-                <td>faiz@gmail.com</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>09:45 PM, 02/01/2025</td>
-                <td>Meetings, Short Meetings, Meet with Asif</td>
-              </tr>
-
-              <tr>
-                <td>02/01/2025</td>
-                <td>Faiz</td>
-                <td>faiz@gmail.com</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>09:45 PM, 02/01/2025</td>
-                <td>Meetings, Short Meetings, Meet with Asif</td>
-              </tr>
-
-              <tr>
-                <td>02/01/2025</td>
-                <td>Faiz</td>
-                <td>faiz@gmail.com</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>09:45 PM, 02/01/2025</td>
-                <td>Meetings, Short Meetings, Meet with Asif</td>
-              </tr>
-
-              <tr>
-                <td>02/01/2025</td>
-                <td>Faiz</td>
-                <td>faiz@gmail.com</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>09:45 PM, 02/01/2025</td>
-                <td>Meetings, Short Meetings, Meet with Asif</td>
-              </tr>
-
-              <tr>
-                <td>02/01/2025</td>
-                <td>Faiz</td>
-                <td>faiz@gmail.com</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>09:45 PM, 02/01/2025</td>
-                <td>Meetings, Short Meetings, Meet with Asif</td>
-              </tr>
-
-              <tr>
-                <td>02/01/2025</td>
-                <td>Faiz</td>
-                <td>faiz@gmail.com</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>09:45 PM, 02/01/2025</td>
-                <td>Meetings, Short Meetings, Meet with Asif</td>
-              </tr>
-
-              <tr>
-                <td>02/01/2025</td>
-                <td>Faiz</td>
-                <td>faiz@gmail.com</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>00:00:00</td>
-                <td>09:45 PM, 02/01/2025</td>
-                <td>Meetings, Short Meetings, Meet with Asif</td>
-              </tr>
-            </tbody>
-          </table>
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
+          {timesheetData && timesheetData.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Total Work Time</th>
+                  <th>Total Break Time</th>
+                  <th>Total Idle Time</th>
+                  <th>Login At</th>
+                  <th>Idle Messages</th>
+                </tr>
+              </thead>
+              <tbody>
+                {timesheetData.map((entry, index) => (
+                  <tr key={index}>
+                    <td>{entry.date}</td>
+                    <td>{entry.name}</td>
+                    <td>{entry.email}</td>
+                    <td>{formatTime(entry.WorkTime)}</td>
+                    <td>{formatTime(entry.BreakTime)}</td>
+                    <td>{formatIdleTime(entry.totalIdleTime)}</td>
+                    <td>{entry.loginAt ? entry.loginAt.join(", ") : "N/A"}</td>
+                    <td>
+                      {entry.idleMsg.length > 0
+                        ? entry.idleMsg.join(", ")
+                        : "None"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            !errorMessage && <p>No data available</p>
+          )}
         </div>
       </div>
     </div>
