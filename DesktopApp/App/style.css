@@ -1,3 +1,11 @@
+.main-time-tracker-fz-conatiner img {
+  position: absolute;
+  top:20px;
+  left:32px;
+  width:30px; /* Adjust size as needed */
+  height: auto; /* Maintain aspect ratio */
+}
+
 .main-time-tracker-fz-conatiner {
   height:auto;
   width: 100%;

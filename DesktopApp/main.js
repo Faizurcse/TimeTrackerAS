@@ -38,8 +38,36 @@ function createWindow() {
   });
 }
 
+// ✅ Function to Show App and Keep It Visible
+function showApp() {
+  if (!mainWindow) {
+    createWindow();
+  } else {
+    mainWindow.show();
+    mainWindow.focus();
+    mainWindow.restore(); // Ensure it's not minimized
+
+    // Fix for `setAlwaysOnTop` inconsistency
+    mainWindow.setAlwaysOnTop(false);
+    setTimeout(() => {
+      mainWindow.setAlwaysOnTop(true, "screen-saver");
+    }, 500);
+  }
+}
+
+// ✅ Function to Handle System Startup
+function handleSystemStartup() {
+  showApp();
+}
+
+function resetIdleTimes() {
+  sleepTime = 0;
+  lockTime = 0;
+}
+
 app.whenReady().then(() => {
   createWindow();
+  handleSystemStartup();
 
   powerMonitor.on("suspend", () => {
     sleepStartTime = Date.now();
@@ -50,7 +78,9 @@ app.whenReady().then(() => {
       sleepTime = Math.floor((Date.now() - sleepStartTime) / 1000);
       sleepStartTime = null;
     }
+
     resetIdleTimes(); // Reset times when user is active
+    showApp();
   });
 
   powerMonitor.on("lock-screen", () => {
@@ -63,12 +93,8 @@ app.whenReady().then(() => {
       lockStartTime = null;
     }
     resetIdleTimes(); // Reset times when user is active
+    showApp();
   });
-
-  function resetIdleTimes() {
-    sleepTime = 0;
-    lockTime = 0;
-  }
 
   setInterval(() => {
     const idleTime = powerMonitor.getSystemIdleTime();
@@ -82,6 +108,7 @@ app.whenReady().then(() => {
     }
   }, 1000);
 });
+
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
