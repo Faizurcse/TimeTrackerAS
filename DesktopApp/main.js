@@ -38,22 +38,19 @@ function createWindow() {
   });
 }
 
-// ✅ Function to Show App and Keep It Visible
 function showApp() {
   if (!mainWindow) {
     createWindow();
   } else {
     mainWindow.show();
-    mainWindow.focus();
     mainWindow.restore(); // Ensure it's not minimized
+    mainWindow.focus();
 
-    // Fix for `setAlwaysOnTop` inconsistency
-    mainWindow.setAlwaysOnTop(false);
-    setTimeout(() => {
-      mainWindow.setAlwaysOnTop(true, "screen-saver");
-    }, 500);
+    // Set always on top immediately
+    mainWindow.setAlwaysOnTop(true, "screen-saver");
   }
 }
+
 
 // ✅ Function to Handle System Startup
 function handleSystemStartup() {
@@ -101,13 +98,15 @@ app.whenReady().then(() => {
 
     if (mainWindow && mainWindow.webContents) {
       mainWindow.webContents.send("activityData", {
-        idleTime: idleTime >= 6 ? idleTime : 0,
-        sleepTime,
+        idleTime: idleTime >= 600 ? idleTime : 0,
+        sleepTime ,
         lockTime,
       });
     }
+
   }, 1000);
 });
+
 
 
 app.on("window-all-closed", () => {

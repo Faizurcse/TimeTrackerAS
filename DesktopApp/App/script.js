@@ -234,11 +234,9 @@ ipcRenderer.on("activityData", (event, arg) => {
   }
 
   newIdleTime = idle + sleep + lock;
-  console.log("-->>>", newIdleTime, idle, sleep, lock);
 
-  if (idleTime >= 6) {
-    document.getElementById("idle-pop-msg").innerHTML = newIdleTime - 6;
-
+  if (newIdleTime >= 600) {
+    document.getElementById("idle-pop-msg").innerHTML = newIdleTime - 600;
     document.getElementById("logout-pop-msg").style.display = "none";
     document.getElementById("idle-pop-msg-container").style.display = "block";
 
@@ -255,9 +253,8 @@ ipcRenderer.on("activityData", (event, arg) => {
       lastActiveTimer = "break";
       document.getElementById("pause-btn").disabled = true;
     }
-
     isIdle = true;
-    lastIdleValue = newIdleTime - 6;
+    lastIdleValue = newIdleTime - 600;
   }
 
   document.getElementById("if-not-add-text").innerHTML = "";
